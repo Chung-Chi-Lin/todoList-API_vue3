@@ -63,7 +63,7 @@
             <li class="list-group-item fs-5 d-flex justify-content-between">
               <span>
                 <input class="form-check-input me-3 p-2"
-                type="checkbox" :id="item.id" :value="item.id"
+                type="checkbox" :id="item.id" :value="item.content"
                 :checked="{ 'true': item.completed_at !== null }"
                 v-model="checked" @click="toggleTodo(item.id)"
                 >
@@ -78,13 +78,6 @@
                 <button type="button" class="btn" @click="delTodo(item.id)">
                   <i class="bi bi-trash-fill btn-li-h"></i></button>
               </span>
-            </li>
-            <li class="list-group-item">
-              <input class="form-check-input me-3 p-2"
-              type="checkbox" id="inlineCheckbox3" value="option1" checked>
-              <label class="form-check-label text-decoration-line-through" for="inlineCheckbox3">
-                整理電腦資料夾
-              </label>
             </li>
           </ul>
         </div>
