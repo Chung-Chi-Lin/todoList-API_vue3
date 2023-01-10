@@ -1,5 +1,5 @@
 <template>
-  <div class="todo-bg">
+  <div class="todo-bg pt-1">
     <loading :active="isLoading">
     <!--     樣式包進 loading 元件內     -->
     <div class="loadingio-spinner-bean-eater-iylmkqp50l"><div class="ldio-t0eby9sr4hr">
@@ -93,10 +93,9 @@
 @media (min-width: 768px) {
     .todo-bg {
       min-height: 100vh;
-      background-image: linear-gradient(174deg, #ffd370 2%, #ffd370 46%,
-      #ffffff 46%, #ffffff 100%, #e8e8e8 100%);
-      /* background: rgb(34,193,195);
-      background: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%); */
+      /* background-image: linear-gradient(174deg, #ffd370 2%, #ffd370 46%,
+      #ffffff 46%, #ffffff 100%, #e8e8e8 100%); */
+      background: linear-gradient(0deg, rgb(216, 254, 255) 0%, rgba(253,187,45,1) 100%);
     }
   }
 </style>
@@ -261,45 +260,6 @@ export default {
         }
       });
     },
-    // 清除已完成
-    // delDone() {
-    //   Swal.fire({
-    //     title: '確定刪除?',
-    //     text: '不要放棄 !請先試著努力完成待辦再刪除',
-    //     icon: 'warning',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#d33',
-    //     confirmButtonText: '刪除 !',
-    //     cancelButtonText: '取消',
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       const config = {
-    //         method: 'delete',
-    //         url: `https://todoo.5xcamp.us/todos/${id}`,
-    //         headers: {
-    //           Authorization: this.token,
-    //         },
-    //       };
-    //       this.$http(config).then((response) => {
-    //         console.log(response);
-    //         Swal.fire(
-    //           '刪除成功!',
-    //           '您已成功刪除待辦 !',
-    //           'success',
-    //         );
-    //         this.getData();
-    //       }).catch((err) => {
-    //         console.log(err);
-    //         Swal.fire(
-    //           '刪除失敗!',
-    //           '請確定是否帳號密碼過期',
-    //           'error',
-    //         );
-    //       });
-    //     }
-    //   });
-    // },
     // 登出
     signOut() {
       const url = `${process.env.VUE_APP_API}/users/sign_out`;
@@ -356,21 +316,23 @@ export default {
           },
         };
         promiseList.push(this.$http(config));
-        // this.$http(config).then((response) => {
-        //   console.log(response);
-        //   return response;
-        // })
-        //   .catch((err) => console.log(err));
       });
       Promise.all(promiseList).then(() => {
         Swal.fire({
           icon: 'success',
-          title: 'Your work has been saved',
+          title: '刪除已完成項目成功',
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2000,
         });
         this.getData();
-      }).catch((err) => console.log(err));
+      }).catch((err) => {
+        Swal.fire({
+          icon: 'error',
+          title: err,
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      });
     },
   },
   computed: {
