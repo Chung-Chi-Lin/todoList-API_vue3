@@ -64,8 +64,8 @@
               <span>
                 <input class="form-check-input me-3 p-2"
                 type="checkbox" :id="item.id" :value="item.content"
-                :checked="{ 'true': item.completed_at !== null }"
-                v-model="checked" @click="toggleTodo(item.id)"
+                :checked="item.completed_at !== null"
+                @click="toggleTodo(item.id)"
                 >
                 <label class="form-check-label" :for="item.id"
                 :class="{ 'text-decoration-line-through': item.completed_at !== null }">
@@ -82,7 +82,7 @@
           </ul>
         </div>
         <div class="card-footer bg-transparent d-flex justify-content-between pt-3">
-          <p class="pt-3"><span class="fs-5">{{ todoList.length }}</span> 個待完成項目</p>
+          <p class="pt-3"><span class="fs-5">{{ todoList.length }}</span> {{ itemCountText }}</p>
           <button type="button" class="btn border-0 btn-h" @click="clearAll">清除已完成項目</button>
         </div>
       </div>
@@ -129,7 +129,6 @@ export default {
         console.log(response.data.todos);
         if (this.filteredType === '全部') {
           this.todoList = [...response.data.todos];
-          this.checked = response.data.todos.filter((item) => item.completed_at !== '' && item.completed_at !== null);
           console.log(response.data.todos);
           this.isLoading = false;
         } else if (this.filteredType === '待完成') {
@@ -139,7 +138,7 @@ export default {
           this.isLoading = false;
         } else {
           console.log('已完成');
-          this.todoList = this.checked;
+          this.todoList = response.data.todos.filter((item) => item.completed_at !== '' && item.completed_at !== null);
           this.isLoading = false;
         }
       }).catch((err) => {
@@ -172,6 +171,7 @@ export default {
         console.log(response);
         this.getData();
         this.isLoading = false;
+        this.todoAdd = '';
       })
         .catch((err) => {
           this.isLoading = false;
@@ -344,7 +344,10 @@ export default {
     },
     // 清除已完成
     clearAll() {
-      this.checked.forEach((item) => {
+      const checkedList = this.todoList.filter((item) => item.completed_at);
+      console.log('checked', checkedList);
+      const promiseList = [];
+      checkedList.forEach((item) => {
         const config = {
           method: 'delete',
           url: `https://todoo.5xcamp.us/todos/${item.id}`,
@@ -352,19 +355,33 @@ export default {
             Authorization: this.token,
           },
         };
-        this.$http(config).then((response) => {
-          console.log(response);
-          return response;
-        })
-          .catch((err) => console.log(err));
+        promiseList.push(this.$http(config));
+        // this.$http(config).then((response) => {
+        //   console.log(response);
+        //   return response;
+        // })
+        //   .catch((err) => console.log(err));
       });
-      Swal.fire({
-        icon: 'success',
-        title: 'Your work has been saved',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      this.getData();
+      Promise.all(promiseList).then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Your work has been saved',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        this.getData();
+      }).catch((err) => console.log(err));
+    },
+  },
+  computed: {
+    itemCountText() {
+      if (this.filteredType === '全部') {
+        return '個全部項目';
+      }
+      if (this.filteredType === '待完成') {
+        return '個待完成項目';
+      }
+      return '個已完成項目';
     },
   },
   mounted() {
