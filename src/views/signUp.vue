@@ -99,26 +99,36 @@ export default {
         },
       };
       this.isLoading = true;
-      this.$http.post(url, data)
-        .then((response) => {
-          console.log(response);
-          this.isLoading = false;
-          Swal.fire({
-            title: response.data.message,
-            text: '歡迎您 ! 請輸入帳號密碼開始使用待辦清單功能 !',
-            icon: 'success',
-            confirmButtonText: '了解',
-          }).then(this.$router.push('/'));
-        })
-        .catch((err) => {
-          this.isLoading = false;
-          Swal.fire({
-            title: err.response.data.message,
-            text: '請確認是否已重複註冊帳號，已有帳號密碼請按登入鈕',
-            icon: 'error',
-            confirmButtonText: '了解',
+      if (this.user.password === this.user.confirmPwd) {
+        this.$http.post(url, data)
+          .then((response) => {
+            console.log(response);
+            this.isLoading = false;
+            Swal.fire({
+              title: response.data.message,
+              text: '歡迎您 ! 請輸入帳號密碼開始使用待辦清單功能 !',
+              icon: 'success',
+              confirmButtonText: '了解',
+            }).then(this.$router.push('/'));
+          })
+          .catch((err) => {
+            this.isLoading = false;
+            Swal.fire({
+              title: err.response.data.message,
+              text: '請確認是否已重複註冊帳號，已有帳號密碼請按登入鈕',
+              icon: 'error',
+              confirmButtonText: '了解',
+            });
           });
+      } else {
+        this.isLoading = false;
+        Swal.fire({
+          title: '失敗',
+          text: '請再次輸入密碼',
+          icon: 'error',
+          confirmButtonText: '了解',
         });
+      }
     },
     goLogin() {
       this.$router.push('/');

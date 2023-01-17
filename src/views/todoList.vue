@@ -59,7 +59,7 @@
         </div>
         <div class="card-body">
           <ul class="list-group list-group-flush text-start"
-            v-for="item in todoList" :key="item.id">
+            v-for="item in changeTodo" :key="item.id">
             <li class="list-group-item fs-5 d-flex justify-content-between">
               <span>
                 <input class="form-check-input me-3 p-2"
@@ -125,21 +125,8 @@ export default {
           Authorization: this.token,
         },
       }).then((response) => {
-        console.log(response.data.todos);
-        if (this.filteredType === '全部') {
-          this.todoList = [...response.data.todos];
-          console.log(response.data.todos);
-          this.isLoading = false;
-        } else if (this.filteredType === '待完成') {
-          console.log('待完成');
-          const toBeDone = response.data.todos.filter((item) => item.completed_at === null);
-          this.todoList = toBeDone;
-          this.isLoading = false;
-        } else {
-          console.log('已完成');
-          this.todoList = response.data.todos.filter((item) => item.completed_at !== '' && item.completed_at !== null);
-          this.isLoading = false;
-        }
+        this.todoList = [...response.data.todos];
+        this.isLoading = false;
       }).catch((err) => {
         console.log(err);
         this.isLoading = false;
@@ -148,7 +135,6 @@ export default {
     // 切換類別
     handleChangeCategory(type) {
       this.filteredType = type;
-      this.getData();
     },
     // 新增 todo
     addTodo() {
@@ -344,6 +330,16 @@ export default {
         return '個待完成項目';
       }
       return '個已完成項目';
+    },
+    changeTodo() {
+      if (this.filteredType === '全部') {
+        return this.todoList;
+      } if (this.filteredType === '待完成') {
+        const toBeDone = this.todoList.filter((item) => item.completed_at === null);
+        return toBeDone;
+      }
+      const done = this.todoList.filter((item) => item.completed_at !== '' && item.completed_at !== null);
+      return done;
     },
   },
   mounted() {
